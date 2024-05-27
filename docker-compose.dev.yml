@@ -1,0 +1,11 @@
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        CLIENT_PORT: ${CLIENT_PORT}
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}"
+    volumes:
+      - ./src:/app/src

@@ -1,4 +1,11 @@
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
+
+const buffer = 50
+const minDesktopSize = 1000
+const minTabletSize = 600
+const contentSize = minDesktopSize - buffer
+const tabletContentSize = minTabletSize - buffer
+const mobileContentSize = 400
 
 const config: Config = {
   content: [
@@ -7,14 +14,24 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      desktop: `${minDesktopSize}px`,
+      tablet: `${minTabletSize}px`,
+    },
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      width: {
+        content: `${contentSize}px`,
+        tabletContent: `${tabletContentSize}px`,
+        mobileContent: `${mobileContentSize}px`,
+      },
+      colors: {
+        bg: "#f7f7f7",
+        fg: "#4c4c4c",
+        bg2: "#605270",
+        fg2: "#ffffff",
       },
     },
   },
   plugins: [],
-};
-export default config;
+}
+export default config

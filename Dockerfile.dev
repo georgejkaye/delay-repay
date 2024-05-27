@@ -1,0 +1,17 @@
+FROM node:18-alpine
+
+ARG CLIENT_PORT
+ENV CLIENT_PORT ${CLIENT_PORT}
+
+WORKDIR /app
+COPY ./package.json .
+COPY ./yarn.lock .
+COPY ./tsconfig.json .
+COPY ./next.config.mjs .
+COPY ./tailwind.config.ts .
+COPY ./next-env.d.ts .
+COPY ./postcss.config.mjs .
+
+RUN yarn
+CMD yarn dev -p ${CLIENT_PORT}
+

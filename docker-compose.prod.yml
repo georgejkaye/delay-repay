@@ -1,0 +1,19 @@
+networks:
+  web:
+    external: true
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      args:
+        CLIENT_PORT: ${CLIENT_PORT}
+    ports:
+      - "${CLIENT_PORT}:${CLIENT_PORT}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cookies_client.rule=Host(`${CLIENT_HOST}`)"
+      - "traefik.http.routers.cookies_client.tls=true"
+      - "traefik.http.routers.cookies_client.tls.certresolver=lets-encrypt"
+      - "traefik.http.services.cookies_client.loadbalancer.server.port=${CLIENT_PORT}"
+    networks:
+      - web
