@@ -3,7 +3,7 @@
 import { act, useEffect, useState } from "react"
 
 const TopBar = () => (
-  <div className="bg-blue-700 p-4">
+  <div className="bg-blue-800 p-4">
     <h1 className="font-bold text-2xl">Delay repay calculator</h1>
   </div>
 )
@@ -54,8 +54,9 @@ const DateAndTimePicker = (props: {
 }) => {
   const [dateText, setDateText] = useState(
     props.date
-      ? `${props.date.getFullYear().toString().padStart(4, "0")}-${props.date
-          .getMonth()
+      ? `${props.date.getFullYear().toString().padStart(4, "0")}-${(
+          props.date.getMonth() + 1
+        )
           .toString()
           .padStart(2, "0")}-${props.date
           .getDate()
@@ -93,14 +94,14 @@ const DateAndTimePicker = (props: {
       <input
         aria-label="Date"
         type="date"
-        className="text-black p-4 rounded-xl w-48 text-center"
+        className="text-black p-2 rounded-xl w-44 text-center"
         value={dateText}
         onChange={(e) => onChangeText(e, setDateText)}
       />
       <input
         aria-label="Time"
         type="time"
-        className="text-black p-4 rounded-xl w-24 text-center"
+        className="text-black p-2 rounded-xl w-24 text-center"
         value={timeText}
         onChange={(e) => onChangeText(e, setTimeText)}
       />
@@ -108,12 +109,31 @@ const DateAndTimePicker = (props: {
   )
 }
 
-const MainSection = () => {
+const getDelayStyle = (delay: number | undefined) =>
+  delay === undefined
+    ? "bg-white"
+    : delay < 15
+    ? "bg-green-500"
+    : delay < 30
+    ? "bg-yellow-600"
+    : delay < 60
+    ? "bg-orange-400"
+    : delay < 120
+    ? "bg-red-500"
+    : "bg-red-800"
+
+const DelayCalculator = (props: {
+  delay: number | undefined
+  setDelay: SetState<number | undefined>
+}) => {
   const [expected, setExpected] = useState<Date | undefined>(new Date())
   const [actual, setActual] = useState<Date | undefined>(new Date())
-  const [delay, setDelay] = useState<number | undefined>(undefined)
   const getDelayText = (delay: number) =>
-    delay < 15
+    delay < 0
+      ? "Early"
+      : delay === 0
+      ? "On time"
+      : delay < 15
       ? "Less than 15 minutes"
       : delay < 30
       ? "15-29 minutes"
@@ -122,33 +142,218 @@ const MainSection = () => {
       : delay < 120
       ? "60-119 minutes"
       : "Over 120 minutes"
+
   useEffect(() => {
     if (!expected || !actual) {
-      setDelay(undefined)
+      props.setDelay(undefined)
     } else {
-      setDelay((actual.getTime() - expected.getTime()) / 1000 / 60)
+      props.setDelay((actual.getTime() - expected.getTime()) / 1000 / 60)
     }
   }, [expected, actual])
   return (
-    <div className="m-5 w-mobileContent tablet:w-tabletContent desktop:w-content mx-auto">
-      <div>
-        <h2 className="font-bold text-xl">Delay details</h2>
-        <div className="flex flex-col tablet:flex-row gap-5">
-          <div>
-            <div className="mt-4 mb-2">Expected arrival</div>
-            <DateAndTimePicker date={expected} setDate={setExpected} />
-          </div>
-          <div>
-            <div className="mt-4 mb-2">Expected arrival</div>
-            <DateAndTimePicker date={actual} setDate={setActual} />
-          </div>
+    <div>
+      <h2 className="font-bold text-xl">Delay details</h2>
+      <div className="flex flex-col desktop:flex-row gap-2">
+        <div>
+          <div className="mt-4 mb-2">Expected arrival</div>
+          <DateAndTimePicker date={expected} setDate={setExpected} />
         </div>
-        <div className="my-4 text-lg">
-          {!delay
-            ? "Enter expected and actual arrival times above"
-            : `Delayed ${delay} minutes: ${getDelayText(delay)}`}
+        <div>
+          <div className="mt-4 mb-2">Actual arrival</div>
+          <DateAndTimePicker date={actual} setDate={setActual} />
         </div>
       </div>
+      <div className={`my-6 text-lg`}>
+        {props.delay === undefined ? (
+          ""
+        ) : (
+          <div className="flex flex-row gap-2">
+            <div className="py-1">Delayed {props.delay} minutes</div>
+            <div
+              className={`${getDelayStyle(
+                props.delay
+              )} rounded-lg px-2 py-1 font-bold`}
+            >
+              {getDelayText(props.delay)}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+interface Ticket {
+  id: number
+  ret: boolean | undefined
+  price: number | undefined
+}
+
+const Ticket = (props: {
+  ret: boolean | undefined
+  price: number | undefined
+  updateTicket: (r: boolean | undefined, p: number | undefined) => void
+  removeTicket: () => void
+}) => {
+  const enabledStyle = "bg-blue-800 text-gray-200"
+  const disabledStyle = "bg-gray-700 text-black hover:bg-gray-600"
+  const singleStyle = !props.ret ? enabledStyle : disabledStyle
+  const returnStyle = props.ret ? enabledStyle : disabledStyle
+  const onClickReturnType = (ret: boolean) =>
+    props.updateTicket(ret, props.price)
+  const [priceText, setPriceText] = useState("")
+  const onChangePriceText = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setPriceText(e.target.value)
+  useEffect(() => {
+    let priceNumber = Number.parseInt(priceText)
+    if (!Number.isNaN(priceNumber)) {
+      props.updateTicket(props.ret, priceNumber)
+    } else {
+      props.updateTicket(props.ret, undefined)
+    }
+  }, [priceText])
+  return (
+    <div className="flex flex-col desktop:flex-row rounded-xl w-96 gap-4">
+      <div className="flex flex-row w-full align-items-center gap-4">
+        <div className="flex flex-row gap-2">
+          <button
+            disabled={!props.ret}
+            className={`${singleStyle} p-2 rounded-xl flex flex-row gap-2`}
+            onClick={(e) => onClickReturnType(false)}
+          >
+            <div>Single</div>
+            <div>{!props.ret ? "✔" : "✘"}</div>
+          </button>
+          <button
+            disabled={props.ret}
+            className={`${returnStyle} p-2 rounded-xl flex flex-row gap-2`}
+            onClick={(e) => onClickReturnType(true)}
+          >
+            <div>Return</div>
+            <div>{props.ret ? "✔" : "✘"}</div>
+          </button>
+        </div>
+        <div className="flex flex-row items-center flex-1 mx-auto justify-center">
+          <div className="mr-2">£</div>
+          <input
+            className="rounded-xl p-2 w-24 text-black"
+            type="text"
+            placeholder="Price"
+            value={priceText}
+            onChange={onChangePriceText}
+          ></input>
+        </div>
+        <button
+          className="text-red-600 hover:text-red-300 p-2 px-3 rounded-xl"
+          onClick={(e) => props.removeTicket()}
+        >
+          ✘
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const getDelayRepay = (price: number, delay: number, ret: boolean) => {
+  let base = delay < 15 ? 0 : delay < 30 ? 0.25 : delay < 60 ? 0.5 : 1
+  let multiplier = ret && delay < 120 ? 0.5 : 1
+  console.log("price", price, "base", base, "mult", multiplier)
+  return price * base * multiplier
+}
+
+const TicketList = (props: { delay: number | undefined }) => {
+  const [tickets, setTickets] = useState<Map<number, Ticket>>(new Map())
+  const [nextId, setNextId] = useState(0)
+  const [repay, setRepay] = useState(0)
+  const [cost, setCost] = useState(0)
+  const updateTicket = (
+    id: number,
+    ret: boolean | undefined,
+    price: number | undefined
+  ) => {
+    console.log("Update")
+    let updatedMap = new Map(tickets)
+    updatedMap.set(id, { id, ret, price })
+    setTickets(updatedMap)
+  }
+  const addTicket = () => {
+    let newTicket = { id: nextId, ret: false, price: 0 }
+    setNextId(nextId + 1)
+    let updatedMap = new Map(tickets)
+    updatedMap.set(newTicket.id, newTicket)
+    setTickets(updatedMap)
+  }
+  const removeTicket = (id: number) => {
+    let newMap = new Map(tickets)
+    newMap.delete(id)
+    setTickets(newMap)
+  }
+  const computeTotalTicketCost = (tickets: Map<number, Ticket>) => {
+    return Array.from(tickets.values())
+      .map((ticket) => (!ticket.price ? 0 : ticket.price))
+      .reduce((prev, cur) => prev + cur, 0)
+  }
+  const computeTotalDelayRepay = (tickets: Map<number, Ticket>) => {
+    return Array.from(tickets.values())
+      .map((ticket) =>
+        !ticket.price || ticket.ret === undefined || !props.delay
+          ? 0
+          : getDelayRepay(ticket.price, props.delay, ticket.ret)
+      )
+      .reduce((prev, cur) => prev + cur, 0)
+  }
+  useEffect(() => {
+    console.log("proc")
+    setRepay(computeTotalDelayRepay(tickets))
+    setCost(computeTotalTicketCost(tickets))
+  }, [tickets])
+  return (
+    <div>
+      <h2 className="font-bold text-xl mb-4">Tickets</h2>
+      <div className="flex flex-row gap-4 mb-6">
+        <div className="flex flex-row gap-4">
+          <div className="py-2">Total cost</div>
+          <div className="p-2 bg-blue-800 rounded-lg font-bold">
+            {" "}
+            £{cost.toFixed(2)}
+          </div>
+        </div>
+        <div className="flex flex-row gap-4">
+          <div className="py-2">Delay repay</div>
+          <div
+            className={`rounded-lg p-2 ${getDelayStyle(props.delay)} font-bold`}
+          >
+            £{repay.toFixed(2)}
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 my-4">
+        {Array.from(tickets.values()).map((ticket) => (
+          <Ticket
+            key={ticket.id}
+            ret={ticket.ret}
+            price={ticket.price}
+            updateTicket={(r, p) => updateTicket(ticket.id, r, p)}
+            removeTicket={() => removeTicket(ticket.id)}
+          />
+        ))}
+        <button
+          className="w-48 rounded-xl my-4 p-2 bg-blue-800 hover:bg-blue-600"
+          onClick={(e) => addTicket()}
+        >
+          Add ticket
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const MainSection = () => {
+  const [delay, setDelay] = useState<number | undefined>(undefined)
+  return (
+    <div className="m-5 w-mobileContent tablet:w-tabletContent desktop:w-content mx-auto">
+      <DelayCalculator delay={delay} setDelay={setDelay} />
+      <TicketList delay={delay} />
     </div>
   )
 }
