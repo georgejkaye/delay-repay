@@ -12,9 +12,9 @@ services:
       - "${CLIENT_PORT}:${CLIENT_PORT}"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.cookies_client.rule=Host(`${CLIENT_HOST}`)"
-      - "traefik.http.routers.cookies_client.tls=true"
-      - "traefik.http.routers.cookies_client.tls.certresolver=lets-encrypt"
-      - "traefik.http.services.cookies_client.loadbalancer.server.port=${CLIENT_PORT}"
+      - "traefik.http.routers.delayrepay.rule=Host(`${CLIENT_HOST}`)"
+      - "traefik.http.routers.delayrepay.tls=true"
+      - "traefik.http.routers.delayrepay.tls.certresolver=lets-encrypt"
+      - "traefik.http.services.delayrepay.loadbalancer.server.port=${CLIENT_PORT}"
     networks:
       - web
