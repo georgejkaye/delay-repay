@@ -9,7 +9,6 @@ COPY ./yarn.lock .
 COPY ./tsconfig.json .
 COPY ./next.config.mjs .
 COPY ./tailwind.config.ts .
-COPY ./next-env.d.ts .
 COPY ./postcss.config.mjs .
 
 RUN yarn
