@@ -1,6 +1,6 @@
 "use client"
 
-import { act, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 const TopBar = () => (
   <div className="bg-blue-800 p-4">
@@ -52,6 +52,7 @@ const DateAndTimePicker = (props: {
   date: Date | undefined
   setDate: SetState<Date | undefined>
 }) => {
+  let { date, setDate } = props
   const [dateText, setDateText] = useState(
     props.date
       ? `${props.date.getFullYear().toString().padStart(4, "0")}-${(
@@ -76,13 +77,13 @@ const DateAndTimePicker = (props: {
     let dateResult = getDateFromText(dateText)
     let timeResult = getTimeFromText(timeText)
     if (!dateResult || !timeResult) {
-      props.setDate(undefined)
+      setDate(undefined)
     } else {
       let { year, month, day } = dateResult
       let { hour, minute } = timeResult
-      props.setDate(new Date(year, month, day, hour, minute))
+      setDate(new Date(year, month, day, hour, minute))
     }
-  }, [dateText, timeText])
+  }, [dateText, timeText, setDate])
   const onChangeText = (
     e: React.ChangeEvent<HTMLInputElement>,
     setState: SetState<string>
@@ -126,6 +127,7 @@ const DelayCalculator = (props: {
   delay: number | undefined
   setDelay: SetState<number | undefined>
 }) => {
+  let { delay, setDelay } = props
   const [expected, setExpected] = useState<Date | undefined>(new Date())
   const [actual, setActual] = useState<Date | undefined>(new Date())
   const getDelayText = (delay: number) =>
@@ -145,11 +147,11 @@ const DelayCalculator = (props: {
 
   useEffect(() => {
     if (!expected || !actual) {
-      props.setDelay(undefined)
+      setDelay(undefined)
     } else {
-      props.setDelay((actual.getTime() - expected.getTime()) / 1000 / 60)
+      setDelay((actual.getTime() - expected.getTime()) / 1000 / 60)
     }
-  }, [expected, actual])
+  }, [expected, actual, setDelay])
   return (
     <div>
       <h2 className="font-bold text-xl">Delay details</h2>
@@ -195,6 +197,7 @@ const Ticket = (props: {
   updateTicket: (r: boolean | undefined, p: number | undefined) => void
   removeTicket: () => void
 }) => {
+  let { ret, price, updateTicket, removeTicket } = props
   const enabledStyle = "bg-blue-800 text-gray-200"
   const disabledStyle = "bg-gray-700 text-black hover:bg-gray-600"
   const singleStyle = !props.ret ? enabledStyle : disabledStyle
@@ -207,11 +210,11 @@ const Ticket = (props: {
   useEffect(() => {
     let priceNumber = Number.parseInt(priceText)
     if (!Number.isNaN(priceNumber)) {
-      props.updateTicket(props.ret, priceNumber)
+      updateTicket(ret, priceNumber)
     } else {
-      props.updateTicket(props.ret, undefined)
+      updateTicket(ret, undefined)
     }
-  }, [priceText])
+  }, [priceText, updateTicket, ret])
   return (
     <div className="flex flex-col desktop:flex-row rounded-xl w-96 gap-4">
       <div className="flex flex-row w-full align-items-center gap-4">
@@ -257,11 +260,11 @@ const Ticket = (props: {
 const getDelayRepay = (price: number, delay: number, ret: boolean) => {
   let base = delay < 15 ? 0 : delay < 30 ? 0.25 : delay < 60 ? 0.5 : 1
   let multiplier = ret && delay < 120 ? 0.5 : 1
-  console.log("price", price, "base", base, "mult", multiplier)
   return price * base * multiplier
 }
 
 const TicketList = (props: { delay: number | undefined }) => {
+  let { delay } = props
   const [tickets, setTickets] = useState<Map<number, Ticket>>(new Map())
   const [nextId, setNextId] = useState(0)
   const [repay, setRepay] = useState(0)
@@ -271,7 +274,6 @@ const TicketList = (props: { delay: number | undefined }) => {
     ret: boolean | undefined,
     price: number | undefined
   ) => {
-    console.log("Update")
     let updatedMap = new Map(tickets)
     updatedMap.set(id, { id, ret, price })
     setTickets(updatedMap)
@@ -303,10 +305,9 @@ const TicketList = (props: { delay: number | undefined }) => {
       .reduce((prev, cur) => prev + cur, 0)
   }
   useEffect(() => {
-    console.log("proc")
     setRepay(computeTotalDelayRepay(tickets))
     setCost(computeTotalTicketCost(tickets))
-  }, [tickets])
+  }, [tickets, delay])
   return (
     <div>
       <h2 className="font-bold text-xl mb-4">Tickets</h2>
