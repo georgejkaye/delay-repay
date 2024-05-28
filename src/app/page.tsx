@@ -240,7 +240,9 @@ const Ticket = (props: {
           <div className="mr-2">£</div>
           <input
             className="rounded-xl p-2 w-24 text-black"
-            type="text"
+            type="number"
+            step="0.01"
+            min="0"
             placeholder="Price"
             value={priceText}
             onChange={onChangePriceText}
