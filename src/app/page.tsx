@@ -265,7 +265,7 @@ const getDelayRepay = (price: number, delay: number, ret: boolean) => {
 
 const TicketList = (props: { delay: number | undefined }) => {
   let { delay } = props
-  const [tickets, setTickets] = useState<Map<number, Ticket>>(new Map())
+  const [tickets, setTickets] = useState<Ticket[]>([])
   const [nextId, setNextId] = useState(0)
   const [repay, setRepay] = useState(0)
   const [cost, setCost] = useState(0)
@@ -274,29 +274,23 @@ const TicketList = (props: { delay: number | undefined }) => {
     ret: boolean | undefined,
     price: number | undefined
   ) => {
-    let updatedMap = new Map(tickets)
-    updatedMap.set(id, { id, ret, price })
-    setTickets(updatedMap)
+    let newArray = [...tickets.filter((t) => t.id !== id), { id, ret, price }]
+    setTickets(newArray)
   }
   const addTicket = () => {
-    let newTicket = { id: nextId, ret: false, price: 0 }
+    setTickets([...tickets, { id: nextId, ret: false, price: 0 }])
     setNextId(nextId + 1)
-    let updatedMap = new Map(tickets)
-    updatedMap.set(newTicket.id, newTicket)
-    setTickets(updatedMap)
   }
   const removeTicket = (id: number) => {
-    let newMap = new Map(tickets)
-    newMap.delete(id)
-    setTickets(newMap)
+    setTickets(tickets.filter((t) => t.id !== id))
   }
-  const computeTotalTicketCost = (tickets: Map<number, Ticket>) => {
-    return Array.from(tickets.values())
+  const computeTotalTicketCost = (tickets: Ticket[]) => {
+    return tickets
       .map((ticket) => (!ticket.price ? 0 : ticket.price))
       .reduce((prev, cur) => prev + cur, 0)
   }
-  const computeTotalDelayRepay = (tickets: Map<number, Ticket>) => {
-    return Array.from(tickets.values())
+  const computeTotalDelayRepay = (tickets: Ticket[]) => {
+    return tickets
       .map((ticket) =>
         !ticket.price || ticket.ret === undefined || !props.delay
           ? 0
