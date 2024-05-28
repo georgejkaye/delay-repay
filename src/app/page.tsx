@@ -83,7 +83,7 @@ const DateAndTimePicker = (props: {
       let { hour, minute } = timeResult
       setDate(new Date(year, month, day, hour, minute))
     }
-  }, [dateText, timeText, setDate])
+  }, [dateText, timeText])
   const onChangeText = (
     e: React.ChangeEvent<HTMLInputElement>,
     setState: SetState<string>
@@ -214,7 +214,7 @@ const Ticket = (props: {
     } else {
       updateTicket(ret, undefined)
     }
-  }, [priceText, updateTicket, ret])
+  }, [priceText, ret])
   return (
     <div className="flex flex-col desktop:flex-row rounded-xl w-96 gap-4">
       <div className="flex flex-row w-full align-items-center gap-4">
