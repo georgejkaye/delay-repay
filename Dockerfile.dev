@@ -4,6 +4,7 @@ ARG CLIENT_PORT
 ENV CLIENT_PORT ${CLIENT_PORT}
 
 WORKDIR /app
+COPY ./operators.json .
 COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./tsconfig.json .
@@ -13,4 +14,3 @@ COPY ./postcss.config.mjs .
 
 RUN yarn
 CMD yarn dev -p ${CLIENT_PORT}
-

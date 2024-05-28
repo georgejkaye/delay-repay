@@ -1,6 +1,23 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import operatorData from "../../operators.json"
+
+interface RepayBracket {
+  min: number
+  max: number | null
+  single: number
+  return: number
+}
+
+interface Operator {
+  name: string
+  repays: RepayBracket[]
+}
+
+const operators: Operator[] = [...operatorData].sort((op1, op2) =>
+  op1.name.localeCompare(op2.name)
+)
 
 const TopBar = () => (
   <div className="bg-blue-800 p-4">
@@ -95,17 +112,48 @@ const DateAndTimePicker = (props: {
       <input
         aria-label="Date"
         type="date"
-        className="text-black p-2 rounded-xl w-44 text-center"
+        className="text-black h-10 rounded-xl w-44 text-center"
         value={dateText}
         onChange={(e) => onChangeText(e, setDateText)}
       />
       <input
         aria-label="Time"
         type="time"
-        className="text-black p-2 rounded-xl w-24 text-center"
+        className="text-black h-10 rounded-xl w-24 text-center"
         value={timeText}
         onChange={(e) => onChangeText(e, setTimeText)}
       />
+    </div>
+  )
+}
+
+const OperatorSelector = (props: {
+  operator: Operator | undefined
+  setOperator: SetState<Operator | undefined>
+}) => {
+  const [selected, setSelected] = useState(-1)
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let index = Number.parseInt(e.target.value)
+    setSelected(index)
+    let newOperator = index === -1 ? undefined : operators[index]
+    props.setOperator(newOperator)
+  }
+  return (
+    <div>
+      <select
+        className="h-10 w-72 px-4 text-black rounded-xl bg-white"
+        value={selected}
+        onChange={handleChange}
+      >
+        <option key={-1} value={-1}></option>
+        {operators.map((op, i) => {
+          return (
+            <option key={i} value={i}>
+              {op.name}
+            </option>
+          )
+        })}
+      </select>
     </div>
   )
 }
@@ -126,36 +174,61 @@ const getDelayStyle = (delay: number | undefined) =>
 const DelayCalculator = (props: {
   delay: number | undefined
   setDelay: SetState<number | undefined>
+  repayBracket: RepayBracket | undefined
+  setRepayBracket: SetState<RepayBracket | undefined>
 }) => {
-  let { delay, setDelay } = props
+  let { delay, setDelay, repayBracket, setRepayBracket } = props
+  const [operator, setOperator] = useState<Operator | undefined>(undefined)
   const [expected, setExpected] = useState<Date | undefined>(new Date())
   const [actual, setActual] = useState<Date | undefined>(new Date())
-  const getDelayText = (delay: number) =>
-    delay < 0
-      ? "Early"
-      : delay === 0
-      ? "On time"
-      : delay < 15
-      ? "Less than 15 minutes"
-      : delay < 30
-      ? "15-29 minutes"
-      : delay < 60
-      ? "30-59 minutes"
-      : delay < 120
-      ? "60-119 minutes"
-      : "Over 120 minutes"
-
+  const getRepayBracket = (operator: Operator | undefined, delay: number) =>
+    !operator
+      ? undefined
+      : operator.repays.find(
+          (bracket) =>
+            (!bracket.min || bracket.min <= delay) &&
+            (!bracket.max || bracket.max >= delay)
+        )
+  const getDelayText = (
+    delay: number | undefined,
+    repayBracket: RepayBracket | undefined
+  ) => {
+    if (!delay) {
+      return "No compensation"
+    } else if (delay < 0) {
+      return "Early"
+    } else if (delay === 0) {
+      return "On time"
+    } else {
+      if (repayBracket === undefined) {
+        return "No compensation"
+      } else {
+        let string =
+          !repayBracket.min && !repayBracket.max
+            ? "Delayed"
+            : !repayBracket.min
+            ? `≤ ${repayBracket.max} minutes`
+            : !repayBracket.max
+            ? `≥ ${repayBracket.min} minutes`
+            : `${repayBracket.min}-${repayBracket.max} minutes`
+        return string
+      }
+    }
+  }
   useEffect(() => {
     if (!expected || !actual) {
       setDelay(undefined)
+      setRepayBracket(undefined)
     } else {
-      setDelay((actual.getTime() - expected.getTime()) / 1000 / 60)
+      let newDelay = (actual.getTime() - expected.getTime()) / 1000 / 60
+      setDelay(newDelay)
+      setRepayBracket(getRepayBracket(operator, newDelay))
     }
-  }, [expected, actual, setDelay])
+  }, [expected, actual, operator])
   return (
     <div>
       <h2 className="font-bold text-xl">Delay details</h2>
-      <div className="flex flex-col desktop:flex-row gap-2">
+      <div className="flex flex-col desktop:flex-row gap-4">
         <div>
           <div className="mt-4 mb-2">Expected arrival</div>
           <DateAndTimePicker date={expected} setDate={setExpected} />
@@ -164,20 +237,52 @@ const DelayCalculator = (props: {
           <div className="mt-4 mb-2">Actual arrival</div>
           <DateAndTimePicker date={actual} setDate={setActual} />
         </div>
+        <div>
+          <div className="mt-4 mb-2">Operator</div>
+          <OperatorSelector operator={operator} setOperator={setOperator} />
+        </div>
       </div>
       <div className={`my-6 text-lg`}>
         {props.delay === undefined ? (
           ""
         ) : (
-          <div className="flex flex-row gap-2">
-            <div className="py-1">Delayed {props.delay} minutes</div>
-            <div
-              className={`${getDelayStyle(
-                props.delay
-              )} rounded-lg px-2 py-1 font-bold`}
-            >
-              {getDelayText(props.delay)}
+          <div className="flex flex-col desktop:flex-row gap-4">
+            <div className="flex flex-row gap-4">
+              <div className="py-1">Delayed {props.delay} minutes</div>
+              {!operator || !repayBracket ? (
+                ""
+              ) : (
+                <div
+                  className={`${getDelayStyle(
+                    props.delay
+                  )} rounded-lg px-2 py-1 font-bold`}
+                >
+                  {getDelayText(delay, repayBracket)}
+                </div>
+              )}
             </div>
+            {!operator || !repayBracket ? (
+              ""
+            ) : (
+              <div className="flex flex-row gap-4">
+                <div className="py-1">Single</div>
+                <div
+                  className={`${getDelayStyle(
+                    props.delay
+                  )} rounded-lg px-2 py-1 font-bold`}
+                >
+                  {repayBracket.single * 100}%
+                </div>
+                <div className="py-1">Return</div>
+                <div
+                  className={`${getDelayStyle(
+                    props.delay
+                  )} rounded-lg px-2 py-1 font-bold`}
+                >
+                  {repayBracket.return * 100}%
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -265,8 +370,12 @@ const getDelayRepay = (price: number, delay: number, ret: boolean) => {
   return price * base * multiplier
 }
 
-const TicketList = (props: { delay: number | undefined }) => {
-  let { delay } = props
+const TicketList = (props: {
+  delay: number | undefined
+  repayBracket: RepayBracket | undefined
+}) => {
+  let { delay, repayBracket } = props
+  console.log(repayBracket)
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [nextId, setNextId] = useState(0)
   const [repay, setRepay] = useState(0)
@@ -298,16 +407,17 @@ const TicketList = (props: { delay: number | undefined }) => {
   const computeTotalDelayRepay = (tickets: Ticket[]) => {
     return tickets
       .map((ticket) =>
-        !ticket.price || ticket.ret === undefined || !props.delay
+        !ticket.price || ticket.ret === undefined || !delay || !repayBracket
           ? 0
-          : getDelayRepay(ticket.price, props.delay, ticket.ret)
+          : ticket.price *
+            (ticket.ret ? repayBracket.return : repayBracket.single)
       )
       .reduce((prev, cur) => prev + cur, 0)
   }
   useEffect(() => {
     setRepay(computeTotalDelayRepay(tickets))
     setCost(computeTotalTicketCost(tickets))
-  }, [tickets, delay])
+  }, [tickets, delay, repayBracket])
   return (
     <div>
       <h2 className="font-bold text-xl mb-4">Tickets</h2>
@@ -351,10 +461,18 @@ const TicketList = (props: { delay: number | undefined }) => {
 
 const MainSection = () => {
   const [delay, setDelay] = useState<number | undefined>(undefined)
+  const [repayBracket, setRepayBracket] = useState<RepayBracket | undefined>(
+    undefined
+  )
   return (
     <div className="w-mobileContent tablet:w-tabletContent desktop:w-content m-5 tablet:mx-auto">
-      <DelayCalculator delay={delay} setDelay={setDelay} />
-      <TicketList delay={delay} />
+      <DelayCalculator
+        delay={delay}
+        setDelay={setDelay}
+        repayBracket={repayBracket}
+        setRepayBracket={setRepayBracket}
+      />
+      <TicketList delay={delay} repayBracket={repayBracket} />
     </div>
   )
 }
