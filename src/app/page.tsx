@@ -351,7 +351,7 @@ const TicketList = (props: { delay: number | undefined }) => {
 const MainSection = () => {
   const [delay, setDelay] = useState<number | undefined>(undefined)
   return (
-    <div className="m-5 w-mobileContent tablet:w-tabletContent desktop:w-content mx-auto">
+    <div className="w-mobileContent tablet:w-tabletContent desktop:w-content m-5 tablet:mx-auto">
       <DelayCalculator delay={delay} setDelay={setDelay} />
       <TicketList delay={delay} />
     </div>
