@@ -276,15 +276,19 @@ const TicketList = (props: { delay: number | undefined }) => {
     ret: boolean | undefined,
     price: number | undefined
   ) => {
-    let newArray = [...tickets.filter((t) => t.id !== id), { id, ret, price }]
-    setTickets(newArray)
+    setTickets((oldTickets) =>
+      oldTickets.map((t) => (t.id === id ? { id, ret, price } : t))
+    )
   }
   const addTicket = () => {
-    setTickets([...tickets, { id: nextId, ret: false, price: 0 }])
+    setTickets((oldTickets) => [
+      ...oldTickets,
+      { id: nextId, ret: false, price: 0 },
+    ])
     setNextId(nextId + 1)
   }
   const removeTicket = (id: number) => {
-    setTickets(tickets.filter((t) => t.id !== id))
+    setTickets((oldTickets) => oldTickets.filter((t) => t.id !== id))
   }
   const computeTotalTicketCost = (tickets: Ticket[]) => {
     return tickets
