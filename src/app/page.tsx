@@ -208,7 +208,7 @@ const Ticket = (props: {
   const onChangePriceText = (e: React.ChangeEvent<HTMLInputElement>) =>
     setPriceText(e.target.value)
   useEffect(() => {
-    let priceNumber = Number.parseInt(priceText)
+    let priceNumber = Number.parseFloat(priceText)
     if (!Number.isNaN(priceNumber)) {
       updateTicket(ret, priceNumber)
     } else {
