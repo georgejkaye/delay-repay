@@ -249,7 +249,7 @@ const DelayCalculator = (props: {
           <div className="flex flex-col desktop:flex-row gap-4">
             <div className="flex flex-row gap-4">
               <div className="py-1">Delayed {props.delay} minutes</div>
-              {!operator || !repayBracket ? (
+              {!operator ? (
                 ""
               ) : (
                 <div
