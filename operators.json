@@ -58,6 +58,23 @@
     ]
   },
   {
+    "code": "XR",
+    "name": "Elizabeth Line",
+    "repays": [
+      { "min": 30, "max": 59, "single": 1, "return": 1 },
+      { "min": 60, "max": null, "single": 1, "return": 1 }
+    ]
+  },
+  {
+    "code": "ES",
+    "name": "Eurostar",
+    "repays": [
+      { "min": 60, "max": 119, "single": 0.25, "return": 0.25 },
+      { "min": 120, "max": 179, "single": 0.5, "return": 0.5 },
+      { "min": 180, "max": null, "single": 0.5, "return": 0.5 }
+    ]
+  },
+  {
     "code": "GX",
     "name": "Gatwick Express",
     "repays": [
@@ -122,6 +139,14 @@
       { "min": 30, "max": 59, "single": 0.5, "return": 0.25 },
       { "min": 60, "max": 119, "single": 1, "return": 0.5 },
       { "min": 120, "max": null, "single": 1, "return": 1 }
+    ]
+  },
+  {
+    "code": "LO",
+    "name": "London Overground",
+    "repays": [
+      { "min": 30, "max": 59, "single": 1, "return": 1 },
+      { "min": 60, "max": null, "single": 1, "return": 1 }
     ]
   },
   {
