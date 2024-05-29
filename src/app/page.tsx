@@ -158,7 +158,7 @@ const OperatorSelector = (props: {
   )
 }
 
-const getDelayStyle = (delay: number | undefined, repayBracket: RepayBracket|undefined) =>
+const getDelayStyle = (delay: number | undefined, repayBracket: RepayBracket | undefined) =>
   delay === undefined
     ? "bg-white"
     : delay < 15 || repayBracket === undefined
