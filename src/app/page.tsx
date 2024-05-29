@@ -112,14 +112,14 @@ const DateAndTimePicker = (props: {
       <input
         aria-label="Date"
         type="date"
-        className="text-black h-10 rounded-xl w-44 text-center"
+        className="text-black h-10 rounded-xl w-44 text-center px-2"
         value={dateText}
         onChange={(e) => onChangeText(e, setDateText)}
       />
       <input
         aria-label="Time"
         type="time"
-        className="text-black h-10 rounded-xl w-24 text-center"
+        className="text-black h-10 rounded-xl w-24 text-center px-2"
         value={timeText}
         onChange={(e) => onChangeText(e, setTimeText)}
       />
