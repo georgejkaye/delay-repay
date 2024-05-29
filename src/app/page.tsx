@@ -21,7 +21,7 @@ const operators: Operator[] = [...operatorData].sort((op1, op2) =>
 
 const TopBar = () => (
   <div className="bg-blue-800 p-4">
-    <h1 className="font-bold text-2xl">Delay repay calculator</h1>
+    <h1 className="font-bold text-2xl">Delay Repay Calculator</h1>
   </div>
 )
 
