@@ -158,10 +158,10 @@ const OperatorSelector = (props: {
   )
 }
 
-const getDelayStyle = (delay: number | undefined) =>
+const getDelayStyle = (delay: number | undefined, repayBracket: RepayBracket | undefined) =>
   delay === undefined
     ? "bg-white"
-    : delay < 15
+    : delay < 15 || repayBracket === undefined
     ? "bg-green-500"
     : delay < 30
     ? "bg-yellow-600"
@@ -254,7 +254,7 @@ const DelayCalculator = (props: {
               ) : (
                 <div
                   className={`${getDelayStyle(
-                    props.delay
+                    props.delay, props.repayBracket
                   )} rounded-lg px-2 py-1 font-bold`}
                 >
                   {getDelayText(delay, repayBracket)}
@@ -268,7 +268,7 @@ const DelayCalculator = (props: {
                 <div className="py-1">Single</div>
                 <div
                   className={`${getDelayStyle(
-                    props.delay
+                    props.delay, props.repayBracket
                   )} rounded-lg px-2 py-1 font-bold`}
                 >
                   {repayBracket.single * 100}%
@@ -276,7 +276,7 @@ const DelayCalculator = (props: {
                 <div className="py-1">Return</div>
                 <div
                   className={`${getDelayStyle(
-                    props.delay
+                    props.delay, props.repayBracket
                   )} rounded-lg px-2 py-1 font-bold`}
                 >
                   {repayBracket.return * 100}%
@@ -434,7 +434,7 @@ const TicketList = (props: {
         <div className="flex flex-row gap-4">
           <div className="py-2">Delay repay</div>
           <div
-            className={`rounded-lg p-2 ${getDelayStyle(props.delay)} font-bold`}
+            className={`rounded-lg p-2 ${getDelayStyle(props.delay, props.repayBracket)} font-bold`}
           >
             {repay.toLocaleString("en-GB", {
               style: "currency",
