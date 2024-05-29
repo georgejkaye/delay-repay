@@ -425,8 +425,10 @@ const TicketList = (props: {
         <div className="flex flex-row gap-4">
           <div className="py-2">Total cost</div>
           <div className="p-2 bg-blue-800 rounded-lg font-bold">
-            {" "}
-            £{cost.toFixed(2)}
+            {cost.toLocaleString("en-GB", {
+              style: "currency",
+              currency: "GBP",
+            })}
           </div>
         </div>
         <div className="flex flex-row gap-4">
@@ -434,7 +436,10 @@ const TicketList = (props: {
           <div
             className={`rounded-lg p-2 ${getDelayStyle(props.delay)} font-bold`}
           >
-            £{repay.toFixed(2)}
+            {repay.toLocaleString("en-GB", {
+              style: "currency",
+              currency: "GBP",
+            })}
           </div>
         </div>
       </div>
