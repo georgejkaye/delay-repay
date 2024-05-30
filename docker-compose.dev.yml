@@ -9,3 +9,4 @@ services:
       - "${CLIENT_PORT}:${CLIENT_PORT}"
     volumes:
       - ./src:/app/src
+      - ./operators.json:/app/operators.json
