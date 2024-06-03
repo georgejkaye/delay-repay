@@ -189,7 +189,7 @@ const getDelayStyle = (
     : "bg-red-800"
 
 const delayBracketTextWidth = "w-36"
-const repayPercentageTextWidth = "w-16"
+const repayPercentageTextWidth = "w-12"
 const repayNoteTextWidth = "w-44"
 const repayRadioButtonWidth = "w-4"
 
@@ -208,7 +208,7 @@ const DelayBracketRow = (props: {
   }
   return (
     <div
-      className={`flex flex-col tablet:flex-row py-4 px-4 rounded-lg ${
+      className={`flex flex-col tablet:flex-row p-2 rounded-lg ${
         !props.active
           ? ""
           : getDelayStyle(props.delay, props.bracket) + " font-bold"
@@ -221,13 +221,13 @@ const DelayBracketRow = (props: {
         <hr className="border-gray-700 my-2" />
       </div>
       <div>
-        <div className="flex flex-row gap-2">
-          <div className={`${repayPercentageTextWidth}`}>Single</div>
-          <div className={`${repayPercentageTextWidth}`}>Return</div>
+        <div className="flex flex-row">
+          <div className={`${repayPercentageTextWidth}`}>Sgl</div>
+          <div className={`${repayPercentageTextWidth}`}>Rtn</div>
         </div>
         <hr className="border-gray-600 my-2" />
         {props.bracket.rates.map((rate, i) => (
-          <div key={i} className="flex flex-row gap-2">
+          <div key={i} className="flex flex-row gap-1">
             <div className={`${repayPercentageTextWidth}`}>
               {!rate.single ? "-" : `${rate.single * 100}%`}
             </div>
@@ -373,15 +373,21 @@ const Ticket = (props: {
     }
   }, [priceText, ret])
   return (
-    <div className="flex flex-col desktop:flex-row rounded-lg w-96 gap-4">
+    <div className="flex flex-col desktop:flex-row rounded-lg gap-4">
       <div className="flex flex-row w-full align-items-center gap-4">
         <div className="flex flex-row gap-2">
+          <button
+            className="text-red-600 hover:text-red-300 p-2 px-3 rounded-lg"
+            onClick={(e) => props.removeTicket()}
+          >
+            ✘
+          </button>
           <button
             disabled={!props.ret}
             className={`${singleStyle} p-2 rounded-lg flex flex-row gap-2`}
             onClick={(e) => onClickReturnType(false)}
           >
-            <div>Single</div>
+            <div>Sgl</div>
             <div>{!props.ret ? "✔" : "✘"}</div>
           </button>
           <button
@@ -389,11 +395,11 @@ const Ticket = (props: {
             className={`${returnStyle} p-2 rounded-lg flex flex-row gap-2`}
             onClick={(e) => onClickReturnType(true)}
           >
-            <div>Return</div>
+            <div>Rtn</div>
             <div>{props.ret ? "✔" : "✘"}</div>
           </button>
         </div>
-        <div className="flex flex-row items-center flex-1 mx-auto justify-center">
+        <div className="flex flex-row items-center flex-1">
           <div className="mr-2">£</div>
           <input
             className="rounded-lg p-2 w-24 text-black"
@@ -405,12 +411,6 @@ const Ticket = (props: {
             onChange={onChangePriceText}
           ></input>
         </div>
-        <button
-          className="text-red-600 hover:text-red-300 p-2 px-3 rounded-lg"
-          onClick={(e) => props.removeTicket()}
-        >
-          ✘
-        </button>
       </div>
     </div>
   )
@@ -480,7 +480,7 @@ const TicketList = (props: {
       <h2 className="font-bold text-xl mb-4">Tickets</h2>
       <div className="flex flex-row gap-4 mb-6">
         <div className="flex flex-row gap-4">
-          <div className="py-2">Total cost</div>
+          <div className="py-2">Cost</div>
           <div className="p-2 bg-blue-800 rounded-lg font-bold">
             {cost.toLocaleString("en-GB", {
               style: "currency",
@@ -489,7 +489,7 @@ const TicketList = (props: {
           </div>
         </div>
         <div className="flex flex-row gap-4">
-          <div className="py-2">Delay repay</div>
+          <div className="py-2">Repay</div>
           <div
             className={`rounded-lg p-2 ${getDelayStyle(
               props.delay,
@@ -531,7 +531,7 @@ const MainSection = () => {
   )
   const [repayRate, setRepayRate] = useState<number>(0)
   return (
-    <div className="w-mobileContent tablet:w-tabletContent desktop:w-content m-5 tablet:mx-auto">
+    <div className="w-mobileContent tablet:w-tabletContent desktop:w-content m-4 tablet:mx-auto">
       <DelayCalculator
         delay={delay}
         setDelay={setDelay}
