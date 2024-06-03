@@ -189,6 +189,22 @@ const getDelayStyle = (
     ? "bg-red-500"
     : "bg-red-800"
 
+const getDelayTextStyle = (
+  delay: number | undefined,
+  repayBracket: RepayRate | RepayBracket | undefined
+) =>
+  delay === undefined
+    ? "text-white"
+    : delay < 15 || repayBracket === undefined
+    ? "text-green-500"
+    : delay < 30
+    ? "text-yellow-600"
+    : delay < 60
+    ? "text-orange-400"
+    : delay < 120
+    ? "text-red-500"
+    : "text-red-800"
+
 const delayBracketTextWidth = "w-36"
 const repayPercentageTextWidth = "w-12"
 const repayNoteTextWidth = "w-44"
@@ -313,7 +329,7 @@ const DelayCalculator = (props: {
           <OperatorSelector operator={operator} setOperator={setOperator} />
         </div>
       </div>
-      <div className={`my-6 text-lg`}>
+      <div className={`mt-4 mb-2 text-lg`}>
         {props.delay === undefined ? (
           ""
         ) : (
@@ -504,21 +520,20 @@ const TicketList = (props: {
   }, [operator])
   return (
     <div>
-      <h2 className="font-bold text-xl mb-4">Tickets</h2>
-      <div className="flex flex-row gap-4 mb-6">
-        <div className="flex flex-row gap-4">
+      <div className="flex flex-row gap-4">
+        <div className="flex flex-row">
           <div className="py-2">Cost</div>
-          <div className="p-2 bg-blue-800 rounded-lg font-bold">
+          <div className="p-2 text-blue-800 font-bold">
             {cost.toLocaleString("en-GB", {
               style: "currency",
               currency: "GBP",
             })}
           </div>
         </div>
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row">
           <div className="py-2">Repay</div>
           <div
-            className={`rounded-lg p-2 ${getDelayStyle(
+            className={`p-2 ${getDelayTextStyle(
               props.delay,
               props.rate
             )} font-bold`}
@@ -543,7 +558,7 @@ const TicketList = (props: {
           />
         ))}
         <button
-          className="w-48 rounded-lg my-4 p-2 bg-blue-800 hover:bg-blue-600"
+          className="w-48 rounded-lg p-2 bg-blue-800 hover:bg-blue-600"
           onClick={(e) => addTicket()}
         >
           Add ticket
