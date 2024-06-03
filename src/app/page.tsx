@@ -408,7 +408,7 @@ const Ticket = (props: {
       <div className="flex flex-row w-full align-items-center gap-4">
         <div className="flex flex-row gap-2">
           <button
-            className="text-red-600 hover:text-red-300 p-2 px-3 rounded-lg"
+            className="bg-red-600 hover:bg-red-400 my-1 px-2 mr-2 rounded-lg"
             onClick={(e) => props.removeTicket()}
           >
             ✘
