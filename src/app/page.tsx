@@ -200,6 +200,12 @@ const DelayBracketRow = (props: {
   selectedRate: number
   setSelectedRate: SetState<number>
 }) => {
+  const selectRadioButton = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    i: number
+  ) => {
+    props.setSelectedRate(i)
+  }
   return (
     <div
       className={`flex flex-col tablet:flex-row py-4 px-4 rounded-lg ${
@@ -235,7 +241,13 @@ const DelayBracketRow = (props: {
               {!props.active ? (
                 ""
               ) : (
-                <input type="radio" name="rate" value={`${i}`} />
+                <input
+                  type="radio"
+                  name={`${props.bracket.min}-${props.bracket.max}`}
+                  value={`${i}`}
+                  checked={props.selectedRate === i}
+                  onChange={(e) => selectRadioButton(e, i)}
+                />
               )}
             </div>
           </div>
