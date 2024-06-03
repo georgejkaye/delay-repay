@@ -17,6 +17,7 @@ interface RepayBracket {
 
 interface Operator {
   name: string
+  return: boolean
   repays: RepayBracket[]
 }
 
@@ -264,9 +265,17 @@ const DelayCalculator = (props: {
   setRepayBracket: SetState<RepayBracket | undefined>
   repayRate: number
   setRepayRate: SetState<number>
+  operator: Operator | undefined
+  setOperator: SetState<Operator | undefined>
 }) => {
-  let { delay, setDelay, repayBracket, setRepayBracket } = props
-  const [operator, setOperator] = useState<Operator | undefined>(undefined)
+  let {
+    operator,
+    setOperator,
+    delay,
+    setDelay,
+    repayBracket,
+    setRepayBracket,
+  } = props
   const [expected, setExpected] = useState<Date | undefined>(new Date())
   const [actual, setActual] = useState<Date | undefined>(new Date())
   const getRepayBracket = (operator: Operator | undefined, delay: number) =>
@@ -349,16 +358,22 @@ interface Ticket {
 }
 
 const Ticket = (props: {
+  operator: Operator | undefined
+  repayRate: RepayRate | undefined
   ret: boolean | undefined
   price: number | undefined
   updateTicket: (r: boolean | undefined, p: number | undefined) => void
   removeTicket: () => void
 }) => {
-  let { ret, price, updateTicket, removeTicket } = props
-  const enabledStyle = "bg-blue-800 text-gray-200"
-  const disabledStyle = "bg-gray-700 text-black hover:bg-gray-600"
-  const singleStyle = !props.ret ? enabledStyle : disabledStyle
-  const returnStyle = props.ret ? enabledStyle : disabledStyle
+  let { operator, repayRate, ret, price, updateTicket, removeTicket } = props
+  const selectedStyle = "bg-blue-800 text-gray-200"
+  const clickableStyle = "bg-gray-700 text-black hover:bg-gray-600"
+  const disabledStyle = "bg-gray-700 text-black"
+  const isReturnDisabled =
+    (props.repayRate && !props.repayRate.return) ||
+    (props.operator && !props.operator.return)
+  const singleStyle = !props.ret ? selectedStyle : disabledStyle
+  const returnStyle = props.ret ? selectedStyle : clickableStyle
   const onClickReturnType = (ret: boolean) =>
     props.updateTicket(ret, props.price)
   const [priceText, setPriceText] = useState("")
@@ -390,14 +405,18 @@ const Ticket = (props: {
             <div>Sgl</div>
             <div>{!props.ret ? "✔" : "✘"}</div>
           </button>
-          <button
-            disabled={props.ret}
-            className={`${returnStyle} p-2 rounded-lg flex flex-row gap-2`}
-            onClick={(e) => onClickReturnType(true)}
-          >
-            <div>Rtn</div>
-            <div>{props.ret ? "✔" : "✘"}</div>
-          </button>
+          {isReturnDisabled ? (
+            ""
+          ) : (
+            <button
+              disabled={isReturnDisabled}
+              className={`${returnStyle} p-2 rounded-lg flex flex-row gap-2`}
+              onClick={(e) => onClickReturnType(true)}
+            >
+              <div>Rtn</div>
+              <div>{props.ret ? "✔" : "✘"}</div>
+            </button>
+          )}
         </div>
         <div className="flex flex-row items-center flex-1">
           <div className="mr-2">£</div>
@@ -423,10 +442,11 @@ const getDelayRepay = (price: number, delay: number, ret: boolean) => {
 }
 
 const TicketList = (props: {
+  operator: Operator | undefined
   delay: number | undefined
   rate: RepayRate | undefined
 }) => {
-  let { delay, rate } = props
+  let { operator, delay, rate } = props
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [nextId, setNextId] = useState(0)
   const [repay, setRepay] = useState(0)
@@ -475,6 +495,13 @@ const TicketList = (props: {
     setRepay(computeTotalDelayRepay(tickets))
     setCost(computeTotalTicketCost(tickets))
   }, [tickets, delay, rate])
+  useEffect(() => {
+    if (operator && !operator.return) {
+      setTickets((oldTickets) =>
+        oldTickets.map(({ id, ret, price }) => ({ id, ret: false, price }))
+      )
+    }
+  }, [operator])
   return (
     <div>
       <h2 className="font-bold text-xl mb-4">Tickets</h2>
@@ -504,8 +531,10 @@ const TicketList = (props: {
         </div>
       </div>
       <div className="flex flex-col gap-4 my-4">
-        {Array.from(tickets.values()).map((ticket) => (
+        {tickets.map((ticket) => (
           <Ticket
+            operator={props.operator}
+            repayRate={props.rate}
             key={ticket.id}
             ret={ticket.ret}
             price={ticket.price}
@@ -530,6 +559,7 @@ const MainSection = () => {
     undefined
   )
   const [repayRate, setRepayRate] = useState<number>(0)
+  const [operator, setOperator] = useState<Operator | undefined>(undefined)
   return (
     <div className="w-mobileContent tablet:w-tabletContent desktop:w-content m-4 tablet:mx-auto">
       <DelayCalculator
@@ -539,9 +569,12 @@ const MainSection = () => {
         setRepayBracket={setRepayBracket}
         repayRate={repayRate}
         setRepayRate={setRepayRate}
+        operator={operator}
+        setOperator={setOperator}
       />
       <TicketList
         delay={delay}
+        operator={operator}
         rate={!repayBracket ? undefined : repayBracket.rates[repayRate]}
       />
     </div>

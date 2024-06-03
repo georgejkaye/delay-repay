@@ -2,6 +2,7 @@
   {
     "code": "VT",
     "name": "Avanti West Coast",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -28,6 +29,7 @@
   {
     "code": "CC",
     "name": "c2c",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -54,6 +56,7 @@
   {
     "code": "CS",
     "name": "Caledonian Sleeper",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -75,6 +78,7 @@
   {
     "code": "CH",
     "name": "Chiltern Railways",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -101,6 +105,7 @@
   {
     "code": "XC",
     "name": "CrossCountry",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -122,6 +127,7 @@
   {
     "code": "EM",
     "name": "East Midlands Railway",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -148,6 +154,7 @@
   {
     "code": "XR",
     "name": "Elizabeth Line",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -167,6 +174,7 @@
   {
     "code": "ES",
     "name": "Eurostar",
+    "return": false,
     "repays": [
       {
         "min": 60,
@@ -197,6 +205,7 @@
   {
     "code": "GX",
     "name": "Gatwick Express",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -223,6 +232,7 @@
   {
     "code": "GC",
     "name": "Grand Central",
+    "return": true,
     "repays": [
       {
         "min": 60,
@@ -244,6 +254,7 @@
   {
     "code": "GN",
     "name": "Great Northern",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -270,6 +281,7 @@
   {
     "code": "GW",
     "name": "Great Western Railway",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -296,6 +308,7 @@
   {
     "code": "HT",
     "name": "Hull Trains",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -317,6 +330,7 @@
   {
     "code": "GR",
     "name": "LNER",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -338,6 +352,7 @@
   {
     "code": "LN",
     "name": "London Northwestern Railway",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -364,6 +379,7 @@
   {
     "code": "LO",
     "name": "London Overground",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -383,6 +399,7 @@
   {
     "code": "LD",
     "name": "Lumo",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -404,6 +421,7 @@
   {
     "code": "ME",
     "name": "Merseyrail",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -418,6 +436,7 @@
   {
     "code": "NR",
     "name": "Northern Trains",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -444,6 +463,7 @@
   {
     "code": "SR",
     "name": "ScotRail",
+    "return": true,
     "repays": [
       {
         "min": 30,
@@ -465,6 +485,7 @@
   {
     "code": "SW",
     "name": "South Western Railway",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -491,6 +512,7 @@
   {
     "code": "SE",
     "name": "Southeastern",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -517,6 +539,7 @@
   {
     "code": "SN",
     "name": "Southern",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -543,6 +566,7 @@
   {
     "code": "TL",
     "name": "Thameslink",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -569,6 +593,7 @@
   {
     "code": "TP",
     "name": "TransPennine Express",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -595,6 +620,7 @@
   {
     "code": "AW",
     "name": "Transport for Wales",
+    "return": true,
     "repays": [
       {
         "min": 15,
@@ -621,6 +647,7 @@
   {
     "code": "WM",
     "name": "West Midlands Railway",
+    "return": true,
     "repays": [
       {
         "min": 15,
