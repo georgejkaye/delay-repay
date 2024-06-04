@@ -227,7 +227,7 @@ const DelayBracketRow = (props: {
     <div
       className={`flex flex-col tablet:flex-row p-2 rounded-lg ${
         !props.active
-          ? ""
+          ? "hidden tablet:block"
           : getDelayStyle(props.delay, props.bracket) + " font-bold"
       }`}
     >
@@ -314,22 +314,21 @@ const DelayCalculator = (props: {
   }, [expected, actual, operator])
   return (
     <div>
-      <h2 className="font-bold text-xl">Delay details</h2>
       <div className="flex flex-col desktop:flex-row gap-4">
         <div>
-          <div className="mt-4 mb-2">Expected arrival</div>
+          <div className="mb-2">Expected arrival</div>
           <DateAndTimePicker date={expected} setDate={setExpected} />
         </div>
         <div>
-          <div className="mt-4 mb-2">Actual arrival</div>
+          <div className="mb-2">Actual arrival</div>
           <DateAndTimePicker date={actual} setDate={setActual} />
         </div>
         <div>
-          <div className="mt-4 mb-2">Operator</div>
+          <div className="mb-2">Operator</div>
           <OperatorSelector operator={operator} setOperator={setOperator} />
         </div>
       </div>
-      <div className={`mt-4 mb-2 text-lg`}>
+      <div className={`my-2 text-lg`}>
         {props.delay === undefined ? (
           ""
         ) : (
@@ -344,7 +343,6 @@ const DelayCalculator = (props: {
         ""
       ) : (
         <div className="my-4">
-          <h3 className="text-lg font-bold mb-4">Delay brackets</h3>
           <div className="flex flex-col gap-4 items-start">
             {operator.repays.map((bracket, i) => (
               <DelayBracketRow
